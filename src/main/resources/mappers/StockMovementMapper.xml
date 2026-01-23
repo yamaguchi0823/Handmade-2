@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.StockMovementMapper">
+
+	<insert id="insert">
+		INSERT INTO stock_movements
+		(variant_id, movement_type, delta, qty_before, qty_after, ref_type, ref_id, note)
+		VALUES
+		(#{variantId}, #{movementType}, #{delta}, #{qtyBefore}, #{qtyAfter}, #{refType},
+		#{refId}, #{note})
+	</insert>
+</mapper>

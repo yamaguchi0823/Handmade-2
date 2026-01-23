@@ -17,4 +17,13 @@ public interface VariantMapper {
 			@Param("status") String status,
 			@Param("stockMode") String stockMode
 			);
+	
+	Integer selectStockForUpdate(
+			@Param("variantId") Long variantId
+			);
+	
+	Integer updateStock(
+			@Param("variantId") Long variantId,
+			@Param("newStock") int newStock
+			);
 }
