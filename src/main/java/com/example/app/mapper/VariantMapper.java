@@ -12,7 +12,7 @@ public interface VariantMapper {
 //検索条件（キーワード、カテゴリ、素材、状態、在庫モード）
 	List<VariantListRowDto> search(
 			@Param("q") String q,
-			@Param("categryId") Long categoryId,
+			@Param("categoryId") Long categoryId,
 			@Param("materialId") Long materialId,
 			@Param("status") String status,
 			@Param("stockMode") String stockMode
