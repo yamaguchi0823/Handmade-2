@@ -57,13 +57,47 @@ public class VariantService {
 				delta, 
 				before, 
 				after, 
-//				"MANUAL",
-//				"null",
-				movementType, 
-				variantId, 
+				"MANUAL",
+				null,
+//				movementType, 
+//				variantId, 
 				note
 				);
-		 
-		
 	}
+	
+	@Transactional
+	public void adjustStock(Long variantId, int newStock, String note) {
+		if(newStock < 0) {
+			throw new IllegalArgumentException("在庫は0以上で入力してください！");
+		}
+		Integer beforeObj = variantMapper.selectStockForUpdate(variantId);
+		if(beforeObj == null) {
+			throw new IllegalArgumentException("対象のバリエーションが存在しません：id=" + variantId);
+		}
+		
+		int before = beforeObj;
+		int after = newStock;
+		int delta = after - before;
+		
+		// 変化がないなら何もしない（履歴を残したいなら削ってOK）
+		if(delta == 0) {
+			return;
+		}
+		
+		int updated = variantMapper.updateStock(variantId, newStock);
+		if(updated == 0) {
+			throw new IllegalArgumentException("在庫更新に失敗しました");
+		}
+		
+		stockMovementMapper.insert(
+				variantId, 
+				"ADJUST", 
+				delta, 
+				before, 
+				after, 
+				"MANUAL", 
+				null, 
+				note);
+	}
+	
 }

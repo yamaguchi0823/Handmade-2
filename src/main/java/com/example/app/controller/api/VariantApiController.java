@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.dto.StockAdjustRequest;
 import com.example.app.dto.StockDeltaRequest;
 import com.example.app.dto.VariantListRowDto;
 import com.example.app.service.VariantService;
@@ -39,6 +40,14 @@ public class VariantApiController {
   	@PathVariable Long variantId, 
   	@RequestBody StockDeltaRequest req) {
   	variantService.addStockDelta(variantId, req.delta(), req.note());
+  }
+  
+  @PostMapping("/{variantId}/stock-movements/adjust")
+  public void adjust(
+  	@PathVariable Long variantId,
+  	@RequestBody StockAdjustRequest req) {
+  	System.out.println("★★★ ADJUST API CALLED ★★★ note=" + req.note());
+  	variantService.adjustStock(variantId, req.newStock(),req.note());
   }
   
 }
