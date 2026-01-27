@@ -1,6 +1,7 @@
 package com.example.app.controller.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,19 +36,25 @@ public class VariantApiController {
     return variantService.search(q, categoryId, materialId, status, stockMode);
   }
   
+  // ★ delta:成功したら確定stockを返す（Reactが扱いやすい）
   @PostMapping("/{variantId}/stock-movements/delta")
-  public void addDelta(
+  public Map<String, Integer> addDelta(
   	@PathVariable Long variantId, 
-  	@RequestBody StockDeltaRequest req) {
-  	variantService.addStockDelta(variantId, req.delta(), req.note());
+  	@RequestBody StockDeltaRequest req
+  	) {
+  	int stock =
+  			variantService.addStockDelta(variantId, req.delta(), req.note());
+  	return Map.of("stock", stock);
   }
   
+  // adjustも同様に stock を返すと使いやすい（今はvoidでも動くけど、基本形として揃える）
   @PostMapping("/{variantId}/stock-movements/adjust")
-  public void adjust(
+  public Map<String, Integer> adjust(
   	@PathVariable Long variantId,
-  	@RequestBody StockAdjustRequest req) {
-  	System.out.println("★★★ ADJUST API CALLED ★★★ note=" + req.note());
-  	variantService.adjustStock(variantId, req.newStock(),req.note());
+  	@RequestBody StockAdjustRequest req
+  	) {
+  	int stock = 
+  			variantService.adjustStock(variantId, req.newStock(), req.note()); // ※後述：戻り値にする
+  	return Map.of("stock",stock);
   }
-  
 }

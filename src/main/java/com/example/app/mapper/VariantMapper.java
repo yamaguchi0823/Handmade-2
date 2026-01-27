@@ -26,4 +26,12 @@ public interface VariantMapper {
 			@Param("variantId") Long variantId,
 			@Param("newStock") int newStock
 			);
+	
+	int updateStockByDelta(
+			@Param("variantId") long variantId,
+			@Param("delta") int delta
+			);
+	int selectStock(
+			@Param("variantId") long variantId
+			);
 }
