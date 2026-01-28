@@ -81,6 +81,19 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{variantId}
 	</update>
-
+	
+	<update id="updateStockByDelta">
+		UPDATE item_variants
+		SET stock = stock + #{delta},
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = #{variantId}
+			AND stock + #{delta} >= 0
+	</update>
+	
+	<select id="selectStock" resultType="int">
+		SELECT stock
+		FROM item_variants
+		WHERE id = #{variantId}
+	</select>
 
 </mapper>
