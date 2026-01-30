@@ -1,10 +1,12 @@
 package com.example.app.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
 import com.example.app.exception.StockConflictException;
 import com.example.app.mapper.StockMovementMapper;
@@ -108,5 +110,38 @@ public class VariantService {
 	    throw new StockConflictException("在庫が不足しています");
 	  }
 	  return variantMapper.selectStock(variantId);
+	}
+	
+	@Transactional
+	public void createVariant(VariantCreateRequest req) {
+		// バリデーション+デフォルト補完
+		if(req.itemId() == null || req.itemId() <= 0) {
+			throw new IllegalArgumentException("作品を選択してください");
+		}
+		if(req.skuCode() == null || req.skuCode().isBlank()) {
+			throw new IllegalArgumentException("SKUは必須です");
+		}
+
+		int stock = (req.stock() == null) ? 0 : req.stock();
+		if(stock < 0) {
+			throw new IllegalArgumentException("在庫は0以上で入力してくれよ");
+		}
+		
+		String status = (req.status() == null || req.status().isBlank())
+				? "ACTIVE"
+				: req.status().trim();
+		
+		BigDecimal price = (req.price() == null) ? BigDecimal.ZERO : req.price();
+		if(price.compareTo(BigDecimal.ZERO)<0) {
+			throw new IllegalArgumentException("価格は0以上で入力してください");
+		}
+		variantMapper.insertVariant(
+				req.itemId(),
+				req.skuCode().trim(),
+				stock, 
+				status, 
+				price
+				);
+	
 	}
 }
