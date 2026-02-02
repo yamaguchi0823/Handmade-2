@@ -95,5 +95,12 @@
 		FROM item_variants
 		WHERE id = #{variantId}
 	</select>
+	
+	<insert id="insertVariant">
+		INSERT INTO item_variants
+			(item_id, sku_code, stock, status, price)
+		VALUE
+			(#{itemId},#{skuCode},#{stock},#{status},#{price})
+	</insert>
 
 </mapper>

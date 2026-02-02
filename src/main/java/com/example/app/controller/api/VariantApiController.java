@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.dto.StockAdjustRequest;
 import com.example.app.dto.StockDeltaRequest;
+import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
 import com.example.app.service.VariantService;
 
@@ -57,4 +58,10 @@ public class VariantApiController {
   			variantService.adjustStock(variantId, req.newStock(), req.note()); // ※後述：戻り値にする
   	return Map.of("stock",stock);
   }
+  
+  @PostMapping
+  public void create(@RequestBody VariantCreateRequest req) {
+  	variantService.createVariant(req);
+  }
+  
 }

@@ -34,4 +34,11 @@ public interface VariantMapper {
 	int selectStock(
 			@Param("variantId") long variantId
 			);
+	int insertVariant(
+			@Param("itemId") long itemId,
+			@Param("skuCode") String skuCode,
+			@Param("stock") int stock,
+			@Param("status") String status,
+			@Param("price") java.math.BigDecimal price
+			);
 }
