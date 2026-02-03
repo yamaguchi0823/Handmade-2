@@ -98,9 +98,9 @@
 	
 	<insert id="insertVariant">
 		INSERT INTO item_variants
-			(item_id, sku_code, stock, status, price)
+			(item_id, sku_code, stock, stock_alert_threshold, status, price)
 		VALUE
-			(#{itemId},#{skuCode},#{stock},#{status},#{price})
+			(#{itemId},#{skuCode},#{stock},#{stockAlertThreshold},#{status},#{price})
 	</insert>
 
 </mapper>

@@ -124,8 +124,15 @@ public class VariantService {
 
 		int stock = (req.stock() == null) ? 0 : req.stock();
 		if(stock < 0) {
-			throw new IllegalArgumentException("在庫は0以上で入力してくれよ");
+			throw new IllegalArgumentException("在庫は0以上で入力してくれよな！");
 		}
+		
+//		在庫警告閾値指定
+		int threshold = (req.stockAlertThreshold() == null) ? 0 : req.stockAlertThreshold();
+		if(threshold < 0) {
+			throw new IllegalArgumentException("在庫しきい値は0以上で入力してくれよな！");
+		}
+		
 		
 		String status = (req.status() == null || req.status().isBlank())
 				? "ACTIVE"
@@ -139,6 +146,7 @@ public class VariantService {
 				req.itemId(),
 				req.skuCode().trim(),
 				stock, 
+				threshold,
 				status, 
 				price
 				);
