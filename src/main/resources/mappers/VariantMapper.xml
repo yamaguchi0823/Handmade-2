@@ -102,5 +102,15 @@
 		VALUE
 			(#{itemId},#{skuCode},#{stock},#{stockAlertThreshold},#{status},#{price})
 	</insert>
+	
+	<update id="updateVariantFields">
+		UPDATE item_variants
+		SET 
+			status = #{status},
+			stock_alert_threshold = #{stockAlertThreshold},
+			price = #{price},
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = #{variantId}
+	</update>
 
 </mapper>

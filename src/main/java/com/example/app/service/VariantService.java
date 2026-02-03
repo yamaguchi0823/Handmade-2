@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
+import com.example.app.dto.VariantUpdateRequest;
 import com.example.app.exception.StockConflictException;
 import com.example.app.mapper.StockMovementMapper;
 import com.example.app.mapper.VariantMapper;
@@ -150,6 +151,39 @@ public class VariantService {
 				status, 
 				price
 				);
-	
 	}
+	
+	@Transactional
+	public void updateVariant(long variantId, VariantUpdateRequest req) {
+		// 1) 対象存在チェック（簡易：stockを受け取れるかで確認）
+		Integer beforeObj = variantMapper.selectStockForUpdate(variantId);
+		if(beforeObj == null) {
+			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
+		}
+		// 2) 入力補完&バリデーション
+		String status = (req.status() == null || req.status().isBlank())
+				? "ACTIVE"
+				: req.status().trim();
+		
+		if(!status.equals("ACTIVE") && !status.equals("INACTIVE")) {
+			throw new IllegalArgumentException("statusはACTIVE/INACTIVEのみです");
+		}
+		
+		int threshold = (req.stockAlertThreshold() == null) ? 0 : req.stockAlertThreshold();
+		if(threshold < 0) {
+			throw new IllegalArgumentException("在庫しきい値は0以上で入力してください");
+		}
+		
+		BigDecimal price = (req.price() == null) ? BigDecimal.ZERO : req.price();
+		if(price.compareTo(BigDecimal.ZERO)<0) {
+			throw new IllegalArgumentException("価格は0以上で入力してください");
+		}
+		
+		// 3) 更新
+		int updated = variantMapper.updateVariantFields(variantId, status, threshold, price);
+		if(updated == 0) {
+			throw new IllegalArgumentException("更新に失敗しました:id=" + variantId);
+		}
+	}
+	
 }
