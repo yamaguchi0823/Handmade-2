@@ -6,6 +6,7 @@ public record VariantCreateRequest(
 		Long itemId,
 		String skuCode,
 		Integer stock,
+		Integer stockAlertThreshold,
 		String status,
 		BigDecimal price
 		) {}
