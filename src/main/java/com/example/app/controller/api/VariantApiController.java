@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,7 @@ import com.example.app.dto.StockAdjustRequest;
 import com.example.app.dto.StockDeltaRequest;
 import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
+import com.example.app.dto.VariantUpdateRequest;
 import com.example.app.service.VariantService;
 
 import lombok.RequiredArgsConstructor;
@@ -64,4 +66,11 @@ public class VariantApiController {
   	variantService.createVariant(req);
   }
   
+  @PutMapping("/{variantId}")
+  public void update(
+  		@PathVariable long variantId,
+  		@RequestBody VariantUpdateRequest req
+  		) {
+  	variantService.updateVariant(variantId, req);
+  }
 }

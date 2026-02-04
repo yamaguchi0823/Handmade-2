@@ -42,4 +42,11 @@ public interface VariantMapper {
 			@Param("status") String status,
 			@Param("price") java.math.BigDecimal price
 			);
+	int updateVariantFields(
+			@Param("variantId") long variantId,
+			@Param("status") String status,
+			@Param("stockAlertThreshold") int stockAlertThreshold,
+			@Param("price") java.math.BigDecimal price
+			);
+	
 }
