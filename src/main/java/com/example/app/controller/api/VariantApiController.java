@@ -1,8 +1,10 @@
 package com.example.app.controller.api;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.app.dto.StockAdjustRequest;
 import com.example.app.dto.StockDeltaRequest;
@@ -81,5 +85,14 @@ public class VariantApiController {
   		@RequestParam(required=false, defaultValue="50") int limit
   		){
   	return variantService.getStockHistory(variantId, limit);
+  }
+  
+  @PostMapping(value= "/{variantId}/image",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public Map<String, String> uploadImage(
+  		@PathVariable long variantId,
+  		@RequestPart("file")  MultipartFile file
+  		) throws IOException {
+  	String filename = variantService.uploadVariantImage(variantId, file);
+				return Map.of("imageUrl", "/uploads/" +filename);
   }
 }

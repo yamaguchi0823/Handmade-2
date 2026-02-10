@@ -1,10 +1,17 @@
 package com.example.app.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.app.dto.StockMovementRowDto;
 import com.example.app.dto.VariantCreateRequest;
@@ -197,4 +204,36 @@ public class VariantService {
 		return stockMovementMapper.selectByVariantId(variantId, safeLimit);
 	}
 	
+	
+	@Transactional
+	public String uploadVariantImage(long variantId, MultipartFile file) throws IOException {
+		if(file == null || file.isEmpty()) {
+			throw new IllegalArgumentException("画像ファイルを選択してください");
+		}
+		// 存在チェック（簡易）
+		Integer stock = variantMapper.selectStock(variantId);
+		if(stock == null) {
+			throw new IllegalArgumentException("対象のバリエーションが存在しません：id=" + variantId);
+		}
+		
+		String original = file.getOriginalFilename();
+		String ext = "";
+		if(original != null && original.contains(".")) {
+			ext = original.substring(original.lastIndexOf(".")).toLowerCase();
+		}
+		if(!ext.matches("\\.(png|jpg|jpeg|webp|gif)")) {
+			throw new IllegalArgumentException("png/jpg/jpeg/webp/gifのみ対応です");
+		}
+		
+		Path dir = Paths.get("uploads");
+		Files.createDirectories(dir);
+		
+		String filename = "v" + variantId + "_" + UUID.randomUUID() + ext;
+		Path savePath = dir.resolve(filename);
+		
+		Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+		
+		variantMapper.updateImageFilename(variantId, filename);
+		return filename;
+	}
 }

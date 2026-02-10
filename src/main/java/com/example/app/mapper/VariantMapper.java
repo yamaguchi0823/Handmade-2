@@ -48,5 +48,6 @@ public interface VariantMapper {
 			@Param("stockAlertThreshold") int stockAlertThreshold,
 			@Param("price") java.math.BigDecimal price
 			);
+	int updateImageFilename(long variantId, String imageFilename);
 	
 }
