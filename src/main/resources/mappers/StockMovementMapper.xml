@@ -9,4 +9,21 @@
 		(#{variantId}, #{movementType}, #{delta}, #{qtyBefore}, #{qtyAfter}, #{refType},
 		#{refId}, #{note})
 	</insert>
+	
+	<select id="selectByVariantId" resultType="com.example.app.dto.StockMovementRowDto">
+		SELECT
+			id,
+			movement_type AS movementType,
+			delta,
+			qty_before AS qtyBefore,
+			qty_after AS qtyAfter,
+			ref_type AS refType,
+			ref_id AS refId,
+			note,
+			created_at AS createdAt
+		FROM stock_movements
+		WHERE variant_id = #{variantId}
+		ORDER BY created_at DESC, id DESC
+		LIMIT #{limit}
+	</select>
 </mapper>

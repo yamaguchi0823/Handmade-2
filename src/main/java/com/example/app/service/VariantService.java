@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.app.dto.StockMovementRowDto;
 import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
 import com.example.app.dto.VariantUpdateRequest;
@@ -184,6 +185,16 @@ public class VariantService {
 		if(updated == 0) {
 			throw new IllegalArgumentException("更新に失敗しました:id=" + variantId);
 		}
+	}
+	
+	// 最新50件とかだけ返す（重くしない）
+	public List<StockMovementRowDto> getStockHistory(Long variantId,int limit){
+		int safeLimit = (limit <= 0 || limit > 200) ? 50 : limit;
+		// 存在チェック（無くても動く）
+		Integer s = variantMapper.selectStock(variantId);
+		if(s == null) throw new IllegalArgumentException("対象のバリエーションが存在しません：id=" + variantId);
+		
+		return stockMovementMapper.selectByVariantId(variantId, safeLimit);
 	}
 	
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.dto.StockAdjustRequest;
 import com.example.app.dto.StockDeltaRequest;
+import com.example.app.dto.StockMovementRowDto;
 import com.example.app.dto.VariantCreateRequest;
 import com.example.app.dto.VariantListRowDto;
 import com.example.app.dto.VariantUpdateRequest;
@@ -72,5 +73,13 @@ public class VariantApiController {
   		@RequestBody VariantUpdateRequest req
   		) {
   	variantService.updateVariant(variantId, req);
+  }
+  
+  @GetMapping("/{variantId}/stock-movements")
+  public List<StockMovementRowDto> history(
+  		@PathVariable Long variantId,
+  		@RequestParam(required=false, defaultValue="50") int limit
+  		){
+  	return variantService.getStockHistory(variantId, limit);
   }
 }
