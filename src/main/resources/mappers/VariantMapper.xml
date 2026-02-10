@@ -112,5 +112,12 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{variantId}
 	</update>
+	
+	<update id="updateImageFilename">
+		UPDATE item_variants
+		SET image_filename = #{imageFilename},
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = #{variantId}
+	</update>
 
 </mapper>
