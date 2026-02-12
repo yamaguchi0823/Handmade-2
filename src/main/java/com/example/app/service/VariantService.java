@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,25 +217,74 @@ public class VariantService {
 		if(stock == null) {
 			throw new IllegalArgumentException("対象のバリエーションが存在しません：id=" + variantId);
 		}
-		
+		// 拡張子取得
 		String original = file.getOriginalFilename();
 		String ext = "";
 		if(original != null && original.contains(".")) {
 			ext = original.substring(original.lastIndexOf(".")).toLowerCase();
 		}
+		
 		if(!ext.matches("\\.(png|jpg|jpeg|webp|gif)")) {
 			throw new IllegalArgumentException("png/jpg/jpeg/webp/gifのみ対応です");
 		}
 		
+		// 既存ファイル名取得（後で削除用）
+		String oldFilename = variantMapper.selectImageFilename(variantId);
+		
+		// 保存先
 		Path dir = Paths.get("uploads");
 		Files.createDirectories(dir);
 		
-		String filename = "v" + variantId + "_" + UUID.randomUUID() + ext;
-		Path savePath = dir.resolve(filename);
+		// 新しいファイル名生成（日時秒+衝突回避３桁）
+		DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+		String ts = LocalDateTime.now().format(fmt);
+		int rand = ThreadLocalRandom.current().nextInt(100,1000);
 		
+		String filename = "v" + variantId + "_" + ts + "_" + rand + ext;
+
+		Path savePath = dir.resolve(filename);
 		Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 		
+		// DB更新
 		variantMapper.updateImageFilename(variantId, filename);
+		
+		// 古いファイル削除（あれば）
+		if(oldFilename != null && !oldFilename.isBlank() && !oldFilename.equals(filename)) {
+			Path oldPath = dir.resolve(oldFilename);
+			try {
+				Files.deleteIfExists(oldPath);
+			} catch(IOException e) {
+				System.err.println("古い画像ファイル削除に失敗:" + oldPath + "/" +e.getMessage());
+			}
+		}
 		return filename;
+	}
+	
+	@Transactional
+	public void deleteVariantImage(long variantId) {
+		// 1) 対象チェック
+		Integer stock = variantMapper.selectStock(variantId);
+		if(stock == null) {
+			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
+		}
+		// 2) 現在のファイル名を取得
+		String oldFilename = variantMapper.selectImageFilename(variantId);
+		
+		// 3) DBをNULLにする
+		int updated = variantMapper.clearImageFilename(variantId);
+		if(updated == 0) {
+			throw new IllegalArgumentException("画像削除に失敗しました:id=" + variantId);
+		}
+		// 4) 物理ファイル削除（あれば）
+		if(oldFilename != null && !oldFilename.isBlank()){
+			Path path = Paths.get("uploads").resolve(oldFilename);
+			try {
+				Files.deleteIfExists(path);
+			} catch(IOException e) {
+				// DBは消えてるが、ファイル削除に失敗したケース（ログだけ出すのが無難）
+				// Loggerがあるならlogger.warn(...)推奨
+				System.err.println("画像ファイル削除に失敗: " + path + "/" + e.getMessage());
+			}
+		}
 	}
 }

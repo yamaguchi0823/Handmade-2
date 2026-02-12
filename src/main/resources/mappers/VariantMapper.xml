@@ -119,5 +119,17 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{variantId}
 	</update>
+	<update id="clearImageFilename">
+		UPDATE item_variants
+		SET image_filename = NULL,
+			updated_at = CURRENT_TIMESTAMP
+		WHERE id = #{variantId}
+	</update>
+	
+	<select id="selectImageFilename" resultType="String">
+		SELECT image_filename
+		FROM item_variants
+		WHERE id = #{variantId}
+	</select>
 
 </mapper>
