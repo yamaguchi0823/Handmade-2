@@ -239,15 +239,29 @@ public class VariantService {
 	
 	@Transactional
 	public void deleteVariantImage(long variantId) {
+		// 1) 対象チェック
 		Integer stock = variantMapper.selectStock(variantId);
 		if(stock == null) {
 			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
 		}
+		// 2) 現在のファイル名を取得
+		String oldFilename = variantMapper.selectImageFilename(variantId);
 		
+		// 3) DBをNULLにする
 		int updated = variantMapper.clearImageFilename(variantId);
 		if(updated == 0) {
 			throw new IllegalArgumentException("画像削除に失敗しました:id=" + variantId);
 		}
-		// 今回は「ファイルの物理削除はしない」（安全＆簡単）
+		// 4) 物理ファイル削除（あれば）
+		if(oldFilename != null && !oldFilename.isBlank()){
+			Path path = Paths.get("uploads").resolve(oldFilename);
+			try {
+				Files.deleteIfExists(path);
+			} catch(IOException e) {
+				// DBは消えてるが、ファイル削除に失敗したケース（ログだけ出すのが無難）
+				// Loggerがあるならlogger.warn(...)推奨
+				System.err.println("画像ファイル削除に失敗: " + path + "/" + e.getMessage());
+			}
+		}
 	}
 }

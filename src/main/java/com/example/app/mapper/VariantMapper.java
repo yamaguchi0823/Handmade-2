@@ -50,5 +50,6 @@ public interface VariantMapper {
 			);
 	int updateImageFilename(long variantId, String imageFilename);
 	int clearImageFilename(long variantId);
+	String selectImageFilename(long variantId);
 	
 }

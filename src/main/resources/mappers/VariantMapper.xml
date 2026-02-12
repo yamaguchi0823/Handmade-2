@@ -125,5 +125,11 @@
 			updated_at = CURRENT_TIMESTAMP
 		WHERE id = #{variantId}
 	</update>
+	
+	<select id="selectImageFilename" resultType="String">
+		SELECT image_filename
+		FROM item_variants
+		WHERE id = #{variantId}
+	</select>
 
 </mapper>
