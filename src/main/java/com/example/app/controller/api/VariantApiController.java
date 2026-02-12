@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,5 +95,12 @@ public class VariantApiController {
   		) throws IOException {
   	String filename = variantService.uploadVariantImage(variantId, file);
 				return Map.of("imageUrl", "/uploads/" +filename);
+  }
+  
+  @DeleteMapping("/{variantId}/image")
+  public void deleteImage(
+  		@PathVariable long variantId
+  		) {
+  	variantService.deleteVariantImage(variantId);
   }
 }

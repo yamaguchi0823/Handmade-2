@@ -49,5 +49,6 @@ public interface VariantMapper {
 			@Param("price") java.math.BigDecimal price
 			);
 	int updateImageFilename(long variantId, String imageFilename);
+	int clearImageFilename(long variantId);
 	
 }

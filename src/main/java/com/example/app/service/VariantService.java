@@ -236,4 +236,18 @@ public class VariantService {
 		variantMapper.updateImageFilename(variantId, filename);
 		return filename;
 	}
+	
+	@Transactional
+	public void deleteVariantImage(long variantId) {
+		Integer stock = variantMapper.selectStock(variantId);
+		if(stock == null) {
+			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
+		}
+		
+		int updated = variantMapper.clearImageFilename(variantId);
+		if(updated == 0) {
+			throw new IllegalArgumentException("画像削除に失敗しました:id=" + variantId);
+		}
+		// 今回は「ファイルの物理削除はしない」（安全＆簡単）
+	}
 }
