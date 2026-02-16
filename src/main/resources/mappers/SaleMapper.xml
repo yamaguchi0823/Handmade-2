@@ -12,7 +12,7 @@
   
   <insert id="insertSaleLine">
   	INSERT INTO sale_lines (sale_id, variant_id, qty, unit_price, cost_price)
-  	VALUES (#{saleId},#{variantId},#{qty},#{unitPrice},#{costPeice})
+  	VALUES (#{saleId},#{variantId},#{qty},#{unitPrice},#{costPrice})
   </insert>
   
   <select id="selectVariantPrices" resultType="map">
