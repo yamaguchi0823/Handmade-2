@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.app.dto.SaleCreateParam;
-import com.example.app.dto.SaleDetailDto;
+import com.example.app.dto.SaleHeaderDto;
 import com.example.app.dto.SaleLineRowDto;
 import com.example.app.dto.SaleListRowDto;
 
@@ -39,12 +39,11 @@ public interface SaleMapper {
 			@Param("limit") int limit
 			);
 	
-	SaleDetailDto selectSaleHeader(
+	SaleHeaderDto selectSaleHeader(
 			@Param("saleId") long saleId
 			);
 	
 	List<SaleLineRowDto> selectSaleLines(
 			@Param("saleId") long saleId
-			);
-	
+			);	
 }

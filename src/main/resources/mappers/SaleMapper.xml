@@ -38,7 +38,7 @@
   	ORDER BY s.sold_at DESC, s.id DESC
   </select>
   
-  <select id="selectSaleHeader" resultType="SaleDetailDto">
+  <select id="selectSaleHeader" resultType="SaleHeaderDto">
   	SELECT 
   		id,
   		sold_at AS soldAt,
@@ -55,7 +55,7 @@
   		v.sku_code AS skuCode,
   		i.name AS itemName,
   		sl.qty AS qty,
-  		sl.umit_price AS unitPrice,
+  		sl.unit_price AS unitPrice,
   		sl.cost_price AS costPrice,
   		(sl.qty * sl.unit_price) AS lineAmount
   	FROM sale_lines sl

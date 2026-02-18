@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.app.dto.SaleCreateParam;
 import com.example.app.dto.SaleCreateRequest;
 import com.example.app.dto.SaleDetailDto;
+import com.example.app.dto.SaleHeaderDto;
 import com.example.app.dto.SaleLineCreateRequest;
 import com.example.app.dto.SaleLineRowDto;
 import com.example.app.dto.SaleListRowDto;
@@ -121,7 +122,7 @@ public class SaleService {
   }
   
   public SaleDetailDto getDetail(long saleId) {
-  	SaleDetailDto header = saleMapper.selectSaleHeader(saleId);
+  	SaleHeaderDto header = saleMapper.selectSaleHeader(saleId);
   	if (header == null ) {
   		throw new IllegalArgumentException("販売が存在しません：id=" + saleId);
   	}
