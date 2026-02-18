@@ -23,5 +23,46 @@
   	WHERE id = #{variantId}
   </select>
   
+  <select id="selectRecentSales" resultType="SaleListRowDto">
+  	SELECT
+  		s.id AS id,
+  		s.sold_at AS soldAt,
+  		s.channel_id AS channelId,
+  		s.note AS note,
+  		COUNT(sl.id) AS linesCount,
+  		COALESCE(SUM(sl.qty), 0) AS totalQty,
+  		COALESCE(SUM(sl.qty * sl.unit_price), 0) AS totalAmount
+  	FROM sales s
+  	LEFT JOIN sale_lines sl ON sl.sale_id = s.id
+  	GROUP BY s.id, s.sold_at, s.channel_id, s.note
+  	ORDER BY s.sold_at DESC, s.id DESC
+  </select>
+  
+  <select id="selectSaleHeader" resultType="SaleDetailDto">
+  	SELECT 
+  		id,
+  		sold_at AS soldAt,
+  		channel_id AS channelId,
+  		note
+  	FROM sales
+  	WHERE id = #{saleId}
+  </select>
+  
+  <select id="selectSaleLines" resultType="SaleLineRowDto">
+  	SELECT
+  		sl.id AS id,
+  		sl.variant_id AS variantId,
+  		v.sku_code AS skuCode,
+  		i.name AS itemName,
+  		sl.qty AS qty,
+  		sl.umit_price AS unitPrice,
+  		sl.cost_price AS costPrice,
+  		(sl.qty * sl.unit_price) AS lineAmount
+  	FROM sale_lines sl
+  	JOIN item_variants v ON v.id = sl.variant_id
+  	JOIN items i ON i.id = v.item_id
+  	WHERE sl.sale_id = #{saleId}
+  	ORDER BY sl.id ASC
+  </select>
 
 </mapper>

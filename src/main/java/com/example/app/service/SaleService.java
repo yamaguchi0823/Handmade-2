@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.app.dto.SaleCreateParam;
 import com.example.app.dto.SaleCreateRequest;
+import com.example.app.dto.SaleDetailDto;
 import com.example.app.dto.SaleLineCreateRequest;
+import com.example.app.dto.SaleLineRowDto;
+import com.example.app.dto.SaleListRowDto;
 import com.example.app.exception.StockConflictException;
 import com.example.app.mapper.SaleMapper;
 import com.example.app.mapper.StockMovementMapper;
@@ -106,12 +109,30 @@ public class SaleService {
           (req.note() == null || req.note().isBlank()) ? null : req.note().trim()
       );
     }
-
     return saleId;
   }
-
   private static BigDecimal nz(BigDecimal v) {
     return (v == null) ? BigDecimal.ZERO : v;
 	}
+  
+  public List<SaleListRowDto> listRecent(int limit){
+  	int lim = (limit <= 0 || limit > 200 ) ? 50 : limit;
+  	return saleMapper.selectRecentSales(lim);
+  }
+  
+  public SaleDetailDto getDetail(long saleId) {
+  	SaleDetailDto header = saleMapper.selectSaleHeader(saleId);
+  	if (header == null ) {
+  		throw new IllegalArgumentException("販売が存在しません：id=" + saleId);
+  	}
+  	List<SaleLineRowDto> lines = saleMapper.selectSaleLines(saleId);
+  	return new SaleDetailDto(
+  			header.id(),
+  			header.soldAt(),
+  			header.channelId(),
+  			header.note(),
+  			lines);
+  }
+  
 	
 }
