@@ -28,14 +28,34 @@
   		s.id AS id,
   		s.sold_at AS soldAt,
   		s.channel_id AS channelId,
+  		ch.name AS channelName,
+  		ch.fee_rate AS feeRate,
+  		ch.fixed_fee AS fixedFee,
   		s.note AS note,
+  		
   		COUNT(sl.id) AS linesCount,
   		COALESCE(SUM(sl.qty), 0) AS totalQty,
-  		COALESCE(SUM(sl.qty * sl.unit_price), 0) AS totalAmount
+  		COALESCE(SUM(sl.qty * sl.unit_price), 0) AS totalAmount,
+  		COALESCE(SUM(sl.qty * sl.cost_price), 0) AS totalCost,
+  		
+  		-- 手数料：売上*(fee_rate/100)
+  		(COALESCE(SUM(sl.qty * sl.unit_price), 0) * COALESCE(ch.fee_rate, 0)/100) AS feeAmount,
+  		
+  		-- 利益：売上-原価-手数料- 固定費（※固定費は「販売1件」単位で引く）
+  		(
+  		COALESCE(SUM(sl.qty * sl.unit_price), 0)
+  		- COALESCE(SUM(sl.qty * sl.cost_price), 0)
+  		- (COALESCE(SUM(sl.qty * sl.unit_price), 0)* COALESCE(ch.fee_rate,0)/100)
+  		- COALESCE(ch.fixed_fee,0)
+  		) AS profit
+  		
   	FROM sales s
   	LEFT JOIN sale_lines sl ON sl.sale_id = s.id
-  	GROUP BY s.id, s.sold_at, s.channel_id, s.note
+  	LEFT JOIN sales_channels ch ON ch.id = s.channel_id
+  	GROUP BY 
+  		s.id, s.sold_at, s.channel_id, ch.name, ch.fee_rate, ch.fixed_fee, s.note
   	ORDER BY s.sold_at DESC, s.id DESC
+  	LIMIT #{limit}
   </select>
   
   <select id="selectSaleHeader" resultType="SaleHeaderDto">

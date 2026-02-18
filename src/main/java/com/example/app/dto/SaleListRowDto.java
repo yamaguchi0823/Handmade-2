@@ -7,8 +7,18 @@ public record SaleListRowDto(
 		Long id,
 		LocalDateTime soldAt,
 		Long channelId,
+		
+		String channelName,
+		BigDecimal feeRate,
+		BigDecimal fixedFee,
+		
 		String note,
 		Integer linesCount,
 		Integer totalQty,
-		BigDecimal totalAmount
+		BigDecimal totalAmount,
+		
+		BigDecimal totalCost,
+		BigDecimal feeAmount,
+		BigDecimal profit
+		
 		) {}
