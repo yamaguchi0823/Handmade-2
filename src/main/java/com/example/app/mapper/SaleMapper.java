@@ -1,12 +1,16 @@
 package com.example.app.mapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.example.app.dto.SaleCreateParam;
+import com.example.app.dto.SaleHeaderDto;
+import com.example.app.dto.SaleLineRowDto;
+import com.example.app.dto.SaleListRowDto;
 
 @Mapper
 public interface SaleMapper {
@@ -30,4 +34,16 @@ public interface SaleMapper {
 	Map<String, BigDecimal> selectVariantPrices(
 			@Param("variantId") Long variantId
 			);
+	
+	List<SaleListRowDto> selectRecentSales(
+			@Param("limit") int limit
+			);
+	
+	SaleHeaderDto selectSaleHeader(
+			@Param("saleId") long saleId
+			);
+	
+	List<SaleLineRowDto> selectSaleLines(
+			@Param("saleId") long saleId
+			);	
 }
