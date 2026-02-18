@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.SalesChannelMapper">
+
+	<select id="selectAll" resultType="SalesChannelDto">
+		SELECT
+			id,
+			name,
+			fee_rate AS feeRate,
+			fixed_fee AS fixedFee,
+			note
+		FROM sales_channels
+		ORDER BY id ASC
+	</select>
+	
+	<select id="selectById" resultType="SalesChannelDto">
+		SELECT
+			id,
+			name,
+			fee_rate AS feeRate,
+			fixed_fee AS fixedFee,
+			note
+		FROM sales_channels
+		ORDER BY id ASC
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sales_channels(name,fee_rate,fixed_fee,note)
+		VALUES (#{name},#{feeRate},#{fixedFee},#{note})
+	</insert>
+	
+	<update id="update">
+		UPDATE sales_channels
+		SET
+			name = #{name},
+			fee_rate = #{feeRate},
+			fixed_fee = #{fixedFee},
+			note = #{note}
+		WHERE id = #{id}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM sales_channels
+		WHERE id = #{id}
+	</delete>
+
+</mapper>
