@@ -1,6 +1,7 @@
 package com.example.app.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.app.dto.ChannelProfitRowDto;
 import com.example.app.dto.SaleCreateParam;
 import com.example.app.dto.SaleCreateRequest;
 import com.example.app.dto.SaleDetailDto;
@@ -135,5 +137,8 @@ public class SaleService {
   			lines);
   }
   
+  public List<ChannelProfitRowDto> channelProfit(LocalDate from, LocalDate to){
+  	return saleMapper.selectChannelProfit(from, to);
+  }
 	
 }
