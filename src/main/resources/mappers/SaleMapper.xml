@@ -130,10 +130,10 @@
   	
   	WHERE 1=1
   		<if test="from != null">
-  			AND s.sold_at<![CDATA[>=]]> CONCAT(#{from}, '00:00:00')
+  			AND s.sold_at<![CDATA[>=]]> TIMESTAMP(#{from}, '00:00:00')
   		</if>
   		<if test="to != null">
-  			AND s.sold_at<![CDATA[<]]> CONCAT(DATE_ADD(#{to}, INTERVAL 1 DAY), '00:00:00')
+  			AND s.sold_at<![CDATA[<]]> TIMESTAMP(DATE_ADD(#{to}, INTERVAL 1 DAY), '00:00:00')
   		</if>
   	
   	GROUP BY s.channel_id, ch.name, ch.fee_rate, ch.fixed_fee
