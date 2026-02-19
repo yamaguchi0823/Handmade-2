@@ -1,12 +1,14 @@
 package com.example.app.mapper;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.example.app.dto.ChannelProfitRowDto;
 import com.example.app.dto.SaleCreateParam;
 import com.example.app.dto.SaleHeaderDto;
 import com.example.app.dto.SaleLineRowDto;
@@ -45,5 +47,10 @@ public interface SaleMapper {
 	
 	List<SaleLineRowDto> selectSaleLines(
 			@Param("saleId") long saleId
-			);	
+			);
+	
+	List<ChannelProfitRowDto> selectChannelProfit(
+			@Param("from") LocalDate from,
+			@Param("to") LocalDate to
+			);
 }
