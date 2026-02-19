@@ -84,5 +84,61 @@
   	WHERE sl.sale_id = #{saleId}
   	ORDER BY sl.id ASC
   </select>
+  
+  <select id="selectChannelProfit" resultType="ChannelProfitRowDto">
+  	SELECT
+  		s.channel_id AS channelId,
+  		COALESCE(ch.name, '未設定') AS channelName,
+  		
+  		COUNT(DISTINCT s.id) AS salesCount,
+  		COUNT(sl.id) AS linesCount,
+  		COALESCE(SUM(sl.qty), 0) AS totalQty,
+  		COALESCE(SUM(sl.qty * sl.unit_price), 0) AS totalAmount,
+  		COALESCE(SUM(sl.qty * sl.cost_price), 0) AS totalCost,
+  		
+  		-- 手数料合計： 売上合計 * (fee_rate/100)
+  		(COALESCE
+  			(SUM(sl.qty * sl.unit_price), 0) 
+  			* 
+  			COALESCE(ch.fee_rate, 0)/100) 
+  		AS feeAmount,
+  		
+  		-- 固定費合計： 販売件数 * fixed_fee
+  			(COUNT(DISTINCT s.id))
+  			*
+  			COALESCE(ch.fixed_fee, 0)
+  		 AS fixed_amount,
+  		 
+  		 -- 利益合計：  売上 - 原価 - 手数料 - 固定費合計
+  		 (
+  		 	COALESCE(SUM(sl.qty * sl.unit_price), 0)
+  		 	- COALESCE(SUM(sl.qty * sl.cost_price), 0)
+  		 	- (
+  		 		COALESCE(SUM(sl.qty * sl.unit_price), 0) 
+  		 		* COALESCE(ch.fee_rate, 0)/100
+  		 		)
+  		 	- (
+  		 		COUNT(DISTINCT s.id) 
+  		 		*
+  		 		COALESCE(ch.fixed_fee, 0)
+  		 		)
+  		 ) AS profit
+  		 
+  	FROM sales s
+  	LEFT JOIN sale_lines sl ON sl.sale_id = s.id
+  	LEFT JOIN sales_channels ch ON ch.id = s.channel_id
+  	
+  	WHERE 1=1
+  		<if test="from != null">
+  			AND s.sold_at<![CDATA[>=]]> CONCAT(#{from}, '00:00:00')
+  		</if>
+  		<if test="to != null">
+  			AND s.sold_at<![CDATA[<]]> CONCAT(DATE_ADD(#{to}, INTERVAL 1 DAY), '00:00:00')
+  		</if>
+  	
+  	GROUP BY s.channel_id, ch.name, ch.fee_rate, ch.fixed_fee
+  	ORDER BY profit DESC
+  	
+  </select>
 
 </mapper>
