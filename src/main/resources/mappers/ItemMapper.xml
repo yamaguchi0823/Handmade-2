@@ -36,7 +36,14 @@
       updated_at = CURRENT_TIMESTAMP
     WHERE id = #{id}
   </update>
-
+  
+  <select id="countActiveVariantsByItemId" resultType="int">
+  	SELECT COUNT(*)
+  	FROM item_variants
+  	WHERE item_id = #{itemId}
+  		AND status ="ACTIVE"
+  </select>
+  
   <update id="deactivate">
     UPDATE items
     SET

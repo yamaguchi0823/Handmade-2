@@ -41,8 +41,17 @@ public class ItemService {
 	
 	@Transactional
 	public void deactivate(long id) {
+		int activeVariantCount = itemMapper.countActiveVariantsByItemId(id);
+		
+		if (activeVariantCount > 0) {
+			throw new IllegalArgumentException(
+					"販売中のバリエーションが登録されている作品は無効化できません"
+					);
+		}
 		int updated = itemMapper.deactivate(id);
-		if(updated == 0) throw new IllegalArgumentException("対象の作品が存在しません");
+		if(updated == 0) {
+			throw new IllegalArgumentException("対象の作品が存在しません");
+		}
 		}
 	
 }
