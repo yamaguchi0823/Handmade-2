@@ -24,5 +24,7 @@ public interface ItemMapper {
 			@Param("description") String description
 			);
 	
+	int countActiveVariantsByItemId(@Param("itemId") long itemId);
+	
 	int deactivate(@Param("id") long id);
 }
