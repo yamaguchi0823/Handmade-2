@@ -124,16 +124,19 @@ public class VariantService {
 	}
 	
 	@Transactional
-	public void createVariant(VariantCreateRequest req) {
+	public long createVariant(VariantCreateRequest req) {
 		// バリデーション+デフォルト補完
 		if(req.itemId() == null || req.itemId() <= 0) {
 			throw new IllegalArgumentException("作品を選択してください");
 		}
-		if(req.skuCode() == null || req.skuCode().isBlank()) {
-			throw new IllegalArgumentException("SKUは必須です");
-		}
+		
+		String skuCode = 
+				(req.skuCode() == null || req.skuCode().isBlank())
+					? null
+					: req.skuCode().trim();
 
 		int stock = (req.stock() == null) ? 0 : req.stock();
+		
 		if(stock < 0) {
 			throw new IllegalArgumentException("在庫は0以上で入力してくれよな！");
 		}
@@ -149,19 +152,31 @@ public class VariantService {
 				? "ACTIVE"
 				: req.status().trim();
 		
+		if (!status.equals("ACTIVE") && !status.equals("INACTIVE")) {
+			throw new IllegalArgumentException(
+					"statusはACTIVE/INACTIVEのみです"
+					);
+		}
+		
 		BigDecimal price = (req.price() == null) ? BigDecimal.ZERO : req.price();
 		if(price.compareTo(BigDecimal.ZERO)<0) {
 			throw new IllegalArgumentException("価格は0以上で入力してください");
 		}
-		variantMapper.insertVariant(
+		
+		int inserted = variantMapper.insertVariant(
 				req.itemId(),
-				req.skuCode().trim(),
+				skuCode,
 				stock, 
 				threshold,
 				status, 
 				price
 				);
+		if (inserted == 0) {
+			throw new IllegalArgumentException("バリエーションの登録に失敗しました");
+		}
+		return variantMapper.selectLastInsertId();
 	}
+
 	
 	@Transactional
 	public void updateVariant(long variantId, VariantUpdateRequest req) {
@@ -170,6 +185,12 @@ public class VariantService {
 		if(beforeObj == null) {
 			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
 		}
+		
+		String skuCode = 
+				(req.skuCode() == null || req.skuCode().isBlank())
+				? null
+				: req.skuCode().trim();
+		
 		// 2) 入力補完&バリデーション
 		String status = (req.status() == null || req.status().isBlank())
 				? "ACTIVE"
@@ -190,7 +211,13 @@ public class VariantService {
 		}
 		
 		// 3) 更新
-		int updated = variantMapper.updateVariantFields(variantId, status, threshold, price);
+		int updated = variantMapper.updateVariantFields(
+				variantId, 
+				skuCode,
+				status, 
+				threshold, 
+				price
+				);
 		if(updated == 0) {
 			throw new IllegalArgumentException("更新に失敗しました:id=" + variantId);
 		}
