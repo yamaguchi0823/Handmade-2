@@ -68,9 +68,17 @@ public class VariantApiController {
   }
   
   @PostMapping
-  public void create(@RequestBody VariantCreateRequest req) {
-  	variantService.createVariant(req);
+  public Map<String, Long> create(
+		  @RequestBody VariantCreateRequest req
+		  ) {
+	  long variantId = variantService.createVariant(req);
+	  return Map.of("variantId", variantId);
   }
+  
+//  @PostMapping
+//  public void create(@RequestBody VariantCreateRequest req) {
+//  	variantService.createVariant(req);
+//  }
   
   @PutMapping("/{variantId}")
   public void update(

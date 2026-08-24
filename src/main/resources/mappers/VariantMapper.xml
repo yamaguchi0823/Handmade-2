@@ -103,9 +103,14 @@
 			(#{itemId},#{skuCode},#{stock},#{stockAlertThreshold},#{status},#{price})
 	</insert>
 	
+	<select id="selectLastInsertId" resultType="long">
+		SELECT LAST_INSERT_ID()
+	</select>
+	
 	<update id="updateVariantFields">
 		UPDATE item_variants
 		SET 
+			sku_code = #{skuCode},
 			status = #{status},
 			stock_alert_threshold = #{stockAlertThreshold},
 			price = #{price},

@@ -42,8 +42,12 @@ public interface VariantMapper {
 			@Param("status") String status,
 			@Param("price") java.math.BigDecimal price
 			);
+	
+	long selectLastInsertId();
+	
 	int updateVariantFields(
 			@Param("variantId") long variantId,
+			@Param("skuCode") String skuCode,
 			@Param("status") String status,
 			@Param("stockAlertThreshold") int stockAlertThreshold,
 			@Param("price") java.math.BigDecimal price
