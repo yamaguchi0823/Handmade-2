@@ -22,6 +22,10 @@ public class ItemService {
 		return itemMapper.selectActiveItems();
 	}
 	
+	public List<ItemDto> listInactive(){
+		return itemMapper.selectInactiveItems();
+	}
+	
 	@Transactional
 	public void create(ItemCreateRequest req) {
 		if(req.name() == null || req.name().isBlank()){
@@ -52,6 +56,16 @@ public class ItemService {
 		if(updated == 0) {
 			throw new IllegalArgumentException("対象の作品が存在しません");
 		}
+	}
+	
+	public void reactive(long id) {
+		int updated = itemMapper.reactive(id);
+		
+		if (updated == 0) {
+			throw new IllegalArgumentException(
+					"対象の無効化済み作品が存在しません"
+					);
 		}
+	}
 	
 }

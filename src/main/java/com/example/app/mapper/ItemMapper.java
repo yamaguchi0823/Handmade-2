@@ -10,6 +10,8 @@ import com.example.app.dto.ItemDto;
 @Mapper
 public interface ItemMapper {
 	List<ItemDto> selectActiveItems();
+
+	List<ItemDto> selectInactiveItems();
 	
 	ItemDto selectById(@Param("id") long id);
 	
@@ -27,4 +29,6 @@ public interface ItemMapper {
 	int countActiveVariantsByItemId(@Param("itemId") long itemId);
 	
 	int deactivate(@Param("id") long id);
+	
+	int reactive(@Param("id") long id);
 }

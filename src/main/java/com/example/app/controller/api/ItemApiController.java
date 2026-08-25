@@ -30,6 +30,11 @@ public class ItemApiController {
 		return itemService.listActive();
 	}
 	
+	@GetMapping("/inactive")
+	public List<ItemDto> listInactive() {
+		return itemService.listInactive();
+	}
+	
 	@PostMapping
 	public void create(@RequestBody ItemCreateRequest req) {
 		itemService.create(req);
@@ -46,5 +51,10 @@ public class ItemApiController {
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable long id) {
 		itemService.deactivate(id);
+	}
+	
+	@PutMapping("/{id}/reactive")
+	public void reactive(@PathVariable long id) {
+		itemService.reactive(id);
 	}
 }
