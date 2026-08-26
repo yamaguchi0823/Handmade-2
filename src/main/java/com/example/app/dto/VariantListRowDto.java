@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 
 public record VariantListRowDto(
     Long id,// バリエID
+    String variantName, // バリエ名
     String skuCode,// SKU
+    Long itemId, // 作品ID
     String itemName,// 作品名
     String color,// 色orモチーフ
     String size,// サイズ

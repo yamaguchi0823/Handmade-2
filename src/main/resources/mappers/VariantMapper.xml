@@ -5,7 +5,9 @@
 	<select id="search" resultType="VariantListRowDto">
 		SELECT
 		v.id AS id,
+		v.variant_name AS variantName,
 		v.sku_code AS skuCode,
+		v.item_id AS itemId,
 		i.name AS itemName,
 		v.color AS color,
 		v.size AS size,
@@ -98,9 +100,9 @@
 	
 	<insert id="insertVariant">
 		INSERT INTO item_variants
-			(item_id, sku_code, stock, stock_alert_threshold, status, price)
+			(item_id,variant_name, sku_code, stock, stock_alert_threshold, status, price)
 		VALUE
-			(#{itemId},#{skuCode},#{stock},#{stockAlertThreshold},#{status},#{price})
+			(#{itemId},#{variantName},#{skuCode},#{stock},#{stockAlertThreshold},#{status},#{price})
 	</insert>
 	
 	<select id="selectLastInsertId" resultType="long">
@@ -110,6 +112,7 @@
 	<update id="updateVariantFields">
 		UPDATE item_variants
 		SET 
+			variant_name = #{variantName},
 			sku_code = #{skuCode},
 			status = #{status},
 			stock_alert_threshold = #{stockAlertThreshold},

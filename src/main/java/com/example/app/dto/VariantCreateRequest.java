@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public record VariantCreateRequest(
 		Long itemId,
+		String variantName,
 		String skuCode,
 		Integer stock,
 		Integer stockAlertThreshold,
