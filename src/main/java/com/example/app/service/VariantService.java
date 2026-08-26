@@ -130,6 +130,12 @@ public class VariantService {
 			throw new IllegalArgumentException("作品を選択してください");
 		}
 		
+		if(req.variantName() == null || req.variantName().isBlank()) {
+			throw new IllegalArgumentException("バリエーション名は必須です");
+		}
+		
+		String variantName = req.variantName().trim();
+		
 		String skuCode = 
 				(req.skuCode() == null || req.skuCode().isBlank())
 					? null
@@ -165,6 +171,7 @@ public class VariantService {
 		
 		int inserted = variantMapper.insertVariant(
 				req.itemId(),
+				variantName,
 				skuCode,
 				stock, 
 				threshold,
@@ -185,6 +192,12 @@ public class VariantService {
 		if(beforeObj == null) {
 			throw new IllegalArgumentException("対象のバリエーションが存在しません:id=" + variantId);
 		}
+		
+		if (req.variantName() == null || req.variantName().isBlank()) {
+			throw new IllegalArgumentException("バリエーション名は必須です");
+		}
+		
+		String variantName = req.variantName().trim();
 		
 		String skuCode = 
 				(req.skuCode() == null || req.skuCode().isBlank())
@@ -212,7 +225,8 @@ public class VariantService {
 		
 		// 3) 更新
 		int updated = variantMapper.updateVariantFields(
-				variantId, 
+				variantId,
+				variantName,
 				skuCode,
 				status, 
 				threshold, 

@@ -36,6 +36,7 @@ public interface VariantMapper {
 			);
 	int insertVariant(
 			@Param("itemId") long itemId,
+			@Param("variantName") String variantName,
 			@Param("skuCode") String skuCode,
 			@Param("stock") int stock,
 			@Param("stockAlertThreshold") int stockAlertThreshold, 
@@ -47,6 +48,7 @@ public interface VariantMapper {
 	
 	int updateVariantFields(
 			@Param("variantId") long variantId,
+			@Param("variantName") String variantName,
 			@Param("skuCode") String skuCode,
 			@Param("status") String status,
 			@Param("stockAlertThreshold") int stockAlertThreshold,
