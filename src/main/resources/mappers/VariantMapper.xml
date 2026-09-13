@@ -34,8 +34,12 @@
 		WHERE 1=1
 
 		<if test="q != null and q != ''">
-			AND (i.name LIKE CONCAT('%', #{q}, '%')
-			OR v.sku_code LIKE CONCAT('%', #{q}, '%'))
+		  AND (
+		    i.name LIKE CONCAT('%', #{q}, '%')
+		    OR i.description LIKE CONCAT('%', #{q}, '%')
+		    OR v.variant_name LIKE CONCAT('%', #{q}, '%')
+		    OR v.sku_code LIKE CONCAT('%', #{q}, '%')
+		  )
 		</if>
 
 		<if test="categoryId != null">
@@ -59,8 +63,8 @@
 			</when>
 			<when test="stockMode == 'LOW_STOCK'">
 				AND v.stock_alert_threshold > 0
-				AND v.stock <![CDATA[<=]]>
-				v.stock_alert_threshold
+				AND v.stock > 0
+				AND v.stock <![CDATA[<=]]> v.stock_alert_threshold
 			</when>
 			<otherwise>
 				<!-- ALL -->
