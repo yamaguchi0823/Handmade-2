@@ -21,7 +21,7 @@
 			fixed_fee AS fixedFee,
 			note
 		FROM sales_channels
-		ORDER BY id ASC
+		WHERE id = #{id}
 	</select>
 	
 	<insert id="insert">

@@ -1,18 +1,18 @@
 package com.example.app.controller.api;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.dto.SalesChannelDto;
+import com.example.app.dto.SalesChannelRequest;
 import com.example.app.service.SalesChannelService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,17 +30,24 @@ public class SalesChannelApiController {
 	}
 	
 	@PostMapping
-	public void create(@RequestBody Map<String,Object> body) {
-		service.create(
-				(String) body.get("name"),
-				body.get("feeRate") == null ? null : new BigDecimal(body.get("feeRate").toString()),
-				body.get("fixedFee")== null ? null : new BigDecimal(body.get("fixedFee").toString()),
-				(String) body.get("note")
-				);
+	public void create(
+			@RequestBody SalesChannelRequest request
+			) {
+		service.create(request);
+	}
+	
+	@PutMapping("/{id}")
+	public void update(
+			@PathVariable Long id,
+			@RequestBody SalesChannelRequest request
+			) {
+		service.update(id, request);
 	}
 	
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable Long id) {
+	public void delete(
+			@PathVariable Long id
+			) {
 		service.delete(id);
 	}
 	
