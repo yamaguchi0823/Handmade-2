@@ -93,6 +93,7 @@
   	SELECT 
   		id,
   		sold_at AS soldAt,
+  		created_at AS createdAt,
   		channel_id AS channelId,
   		note
   	FROM sales
@@ -102,9 +103,11 @@
   <select id="selectSaleLines" resultType="SaleLineRowDto">
   	SELECT
   		sl.id AS id,
+  		i.id AS itemId,
   		sl.variant_id AS variantId,
   		v.sku_code AS skuCode,
   		i.name AS itemName,
+  		v.variant_name AS variantName,
   		sl.qty AS qty,
   		sl.unit_price AS unitPrice,
   		sl.cost_price AS costPrice,

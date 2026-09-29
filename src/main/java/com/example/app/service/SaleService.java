@@ -132,6 +132,7 @@ public class SaleService {
   	return new SaleDetailDto(
   			header.id(),
   			header.soldAt(),
+  			header.createdAt(),
   			header.channelId(),
   			header.note(),
   			lines);
