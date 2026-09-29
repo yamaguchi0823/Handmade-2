@@ -25,16 +25,28 @@
   
   <select id="selectRecentSales" resultType="SaleListRowDto">
   	SELECT
-  		s.id AS id,
-  		s.sold_at AS soldAt,
-  		s.channel_id AS channelId,
-  		ch.name AS channelName,
-  		ch.fee_rate AS feeRate,
-  		ch.fixed_fee AS fixedFee,
-  		s.note AS note,
-  		
-  		COUNT(sl.id) AS linesCount,
-  		COALESCE(SUM(sl.qty), 0) AS totalQty,
+    s.id AS id,
+    s.sold_at AS soldAt,
+    s.channel_id AS channelId,
+    ch.name AS channelName,
+    ch.fee_rate AS feeRate,
+    ch.fixed_fee AS fixedFee,
+
+    GROUP_CONCAT(
+        DISTINCT i.name
+        ORDER BY i.name
+        SEPARATOR ' / '
+    ) AS itemName,
+
+    GROUP_CONCAT(
+        DISTINCT v.variant_name
+        ORDER BY v.variant_name
+        SEPARATOR ' / '
+    ) AS variantName,
+
+    s.note AS note,
+    COUNT(sl.id) AS linesCount,
+    COALESCE(SUM(sl.qty), 0) AS totalQty,
   		COALESCE(SUM(sl.qty * sl.unit_price), 0) AS totalAmount,
   		COALESCE(SUM(sl.qty * sl.cost_price), 0) AS totalCost,
   		
@@ -49,11 +61,30 @@
   		- COALESCE(ch.fixed_fee,0)
   		) AS profit
   		
-  	FROM sales s
-  	LEFT JOIN sale_lines sl ON sl.sale_id = s.id
-  	LEFT JOIN sales_channels ch ON ch.id = s.channel_id
+  		
+  		FROM sales s
+
+		LEFT JOIN sale_lines sl
+		    ON sl.sale_id = s.id
+		
+		LEFT JOIN item_variants v
+		    ON v.id = sl.variant_id
+		
+		LEFT JOIN items i
+		    ON i.id = v.item_id
+		
+		LEFT JOIN sales_channels ch
+		    ON ch.id = s.channel_id
+  		
   	GROUP BY 
-  		s.id, s.sold_at, s.channel_id, ch.name, ch.fee_rate, ch.fixed_fee, s.note
+  		s.id, 
+  		s.sold_at, 
+  		s.channel_id, 
+  		ch.name, 
+  		ch.fee_rate, 
+  		ch.fixed_fee, 
+  		s.note
+  		
   	ORDER BY s.sold_at DESC, s.id DESC
   	LIMIT #{limit}
   </select>
