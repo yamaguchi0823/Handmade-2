@@ -7,7 +7,7 @@ public record ChannelProfitRowDto(
 		String channelName,
 		Integer salesCount,
 		Integer linesCount,
-		Integer toralQty,
+		Integer totalQty,
 		BigDecimal totalAmount,
 		BigDecimal totalCost,
 		BigDecimal feeAmount,

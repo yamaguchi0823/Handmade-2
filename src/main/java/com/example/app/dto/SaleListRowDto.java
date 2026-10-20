@@ -12,6 +12,9 @@ public record SaleListRowDto(
 		BigDecimal feeRate,
 		BigDecimal fixedFee,
 		
+		String itemName,
+		String variantName,
+		
 		String note,
 		Integer linesCount,
 		Integer totalQty,

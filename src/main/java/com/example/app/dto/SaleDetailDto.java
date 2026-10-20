@@ -6,6 +6,7 @@ import java.util.List;
 public record SaleDetailDto(
 		Long id,
 		LocalDateTime soldAt,
+		LocalDateTime createdAt,
 		Long channelId,
 		String note,
 		List<SaleLineRowDto> lines
