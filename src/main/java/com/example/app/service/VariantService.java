@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,9 @@ public class VariantService {
 
 	private final VariantMapper variantMapper;
 	private final StockMovementMapper stockMovementMapper;
+	
+	@Value("${app.upload-dir}")
+	private String uploadDir;
 
 	// 検索条件（キーワード、カテゴリ、素材、状態、在庫モード）
 	public List<VariantListRowDto> search(
@@ -273,7 +277,7 @@ public class VariantService {
 		String oldFilename = variantMapper.selectImageFilename(variantId);
 		
 		// 保存先
-		Path dir = Paths.get("uploads");
+		Path dir = Paths.get(uploadDir).toAbsolutePath().normalize();
 		Files.createDirectories(dir);
 		
 		// 新しいファイル名生成（日時秒+衝突回避３桁）
@@ -318,7 +322,10 @@ public class VariantService {
 		}
 		// 4) 物理ファイル削除（あれば）
 		if(oldFilename != null && !oldFilename.isBlank()){
-			Path path = Paths.get("uploads").resolve(oldFilename);
+			Path path = Paths.get(uploadDir)
+					.toAbsolutePath()
+					.normalize()
+					.resolve(oldFilename);
 			try {
 				Files.deleteIfExists(path);
 			} catch(IOException e) {
